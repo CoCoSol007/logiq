@@ -1,0 +1,28 @@
+cabal-version:       2.2
+
+name:                logik
+version:             0.1.0.0
+description:         Logik is a strongly-typed logic interpreter written in Haskell
+homepage:            https://github.com/cocosol007/logik#readme
+license:             GPL-3.0-or-later
+license-file:        LICENSE
+author:              CoCoSol
+copyright:           2025 CoCoSol
+category:            logic
+build-type:          Simple
+extra-source-files:  README.md
+
+executable logik
+  hs-source-dirs:      src
+  main-is:             Main.hs
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+  ghc-options:         -Wall
+                       -Wcompat
+                       -Widentities
+                       -Wincomplete-record-updates
+                       -Wincomplete-uni-patterns
+                       -Wmissing-export-lists
+                       -Wmissing-home-modules
+                       -Wpartial-fields
+                       -Wredundant-constraints
