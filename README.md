@@ -1,4 +1,19 @@
-# Logik
+<a id="readme-top"></a>
+<div align="center">
+
+</div>
+
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <img src="logo.png" width="400">
+  <p align="center">
+    <br />
+    Logik is a strongly-typed logic interpreter written in Haskell.
+  </p>
+</div>
+
+---
 
 **Logik** is a strongly-typed logic interpreter written in **Haskell**, designed to model and evaluate systems based on propositional and first-order logic. It supports the declaration of types, constants, functions, predicates, axioms, and initial facts, and enables the inference of logical truths through deduction.
 
