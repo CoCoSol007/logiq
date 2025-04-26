@@ -1,0 +1,67 @@
+// Example : University Course Prerequisites
+
+Types:
+    Student
+    Course
+
+Constants:
+    Alice : Student
+    Bob : Student
+    Charlie : Student
+
+    Math101 : Course
+    Math201 : Course
+    Phys101 : Course
+    IT301   : Course
+
+Functions:
+    passed(Student, Course) : bool
+    prereq(Course) : Set[Course]
+    enrolled(Student, Course) : bool
+
+Predicates:
+    Eligible(Student, Course) : "Student is eligible to enroll"
+    Advanced(Student) : "Student is following an advanced course"
+
+Axioms:
+    // A student is eligible if all prerequisites are passed
+    ∀s:Student, c:Course, (∀p ∈ prereq(c), passed(s, p)) -> Eligible(s, c)
+
+    // A student can enroll only if they are eligible
+    ∀s:Student, c:Course, Eligible(s, c) -> enrolled(s, c)
+
+    // A student is considered advanced if enrolled in a course with ≥ 2 prerequisites
+    ∀s:Student, c:Course, enrolled(s, c) & |prereq(c)| ≥ 2 -> Advanced(s)
+
+Init:
+    // Course prerequisites
+    prereq(Math201) = {Math101}
+    prereq(IT301)   = {Math201, Phys101}
+    prereq(Phys101) = {Math101}
+
+    // Student results
+    passed(Alice, Math101) = true
+    passed(Alice, Math201) = true
+    passed(Alice, Phys101) = true
+
+    passed(Bob, Math101) = true
+    passed(Bob, Phys101) = false
+
+    passed(Charlie, Math101) = true
+
+Eval:
+    // Eligibility
+    Eligible(Alice, IT301)         // True
+    Eligible(Bob, IT301)           // False
+    Eligible(Charlie, Phys101)     // True
+
+    // Enrollment
+    enrolled(Alice, IT301)         // True
+    enrolled(Bob, IT301)           // False
+
+    // Advanced student
+    Advanced(Alice)                // True
+    Advanced(Charlie)              // False
+
+    // Logical implications
+    Eligible(Bob, Phys101) -> enrolled(Bob, Phys101)    // True (if Bob chooses to enroll)

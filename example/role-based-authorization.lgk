@@ -1,6 +1,4 @@
-// ---------
-// Global Complex Example
-// ---------
+// Example : Role-based authorization
 
 Types:
     User
