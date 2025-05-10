@@ -28,39 +28,33 @@
 
 ## Example
 
-```logik
-Types:
-    User
-    Role
+```Logik
+types
+  User: {alice, bob, charlie}
+  Role: {admin, client}
 
-Constants:
-    Alice : User
-    Bob : User
-    Charlie : User
-    Admin : Role
+functions
+  roleOf: User -> Role
+  managerOf: User -> User
+  delegated: User x User → boolean
+  authorized: User -> boolean
+  access: User -> boolean
 
-Functions:
-    roleOf(User) : Role
-    managerOf(User) : User
+axioms
+  ∀u ∈ User, roleOf(u) = admin => authorized(u)
+  ∀u,v ∈ User, authorized(u) ∧ delegated(u,v) => authorized(v)
+  ∀u ∈ User, authorized(managerOf(u)) => authorized(u)
+  ∀u ∈ User, authorized(u) => access(u)
 
-Predicates:
-    Authorized(User)
-    Access(User)
-    Delegated(User, User)
+init
+  roleOf(alice) = admin
+  managerOf(charlie) = bob
+  delegated(alice, bob)
+  authorized(alice)
+  authorized(bob)
 
-Axioms:
-    ∀u:User, roleOf(u) = Admin -> Authorized(u)
-    ∀u,v:User, Authorized(u) & Delegated(u,v) -> Authorized(v)
-    ∀u:User, Authorized(managerOf(u)) -> Authorized(u)
-    ∀u:User, Authorized(u) -> Access(u)
-
-Init:
-    roleOf(Alice) = Admin
-    managerOf(Charlie) = Bob
-    Delegated(Alice, Bob)
-
-Eval:
-    Access(Alice)       // True
-    Access(Bob)         // True
-    Authorized(Charlie) // True
+eval
+  access(alice)
+  access(bob)
+  authorized(charlie)
 ```
