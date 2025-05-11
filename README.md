@@ -29,32 +29,38 @@
 ## Example
 
 ```Logik
-types
+TYPES {
   User: {alice, bob, charlie}
   Role: {admin, client}
+}
+  
 
-functions
+FUNCTIONS {
   roleOf: User -> Role
   managerOf: User -> User
-  delegated: User x User → boolean
+  delegated: User.User -> boolean
   authorized: User -> boolean
   access: User -> boolean
+}
 
-axioms
+AXIOMS {
   ∀u ∈ User, roleOf(u) = admin => authorized(u)
-  ∀u,v ∈ User, authorized(u) ∧ delegated(u,v) => authorized(v)
+  ∀u,v ∈ User.User, authorized(u) ∧ delegated(u,v) => authorized(v)
   ∀u ∈ User, authorized(managerOf(u)) => authorized(u)
   ∀u ∈ User, authorized(u) => access(u)
+}
 
-init
-  roleOf(alice) = admin
-  managerOf(charlie) = bob
+INIT {
+  roleOf(alice) := admin
+  managerOf(charlie) := bob
   delegated(alice, bob)
   authorized(alice)
   authorized(bob)
+}
 
-eval
+QUERY {
   access(alice)
   access(bob)
   authorized(charlie)
+}
 ```
