@@ -22,45 +22,44 @@
 - Declarative syntax inspired by formal logic and rule-based systems
 - Custom domain types (e.g., `User`, `Role`)
 - Typed function and predicate declarations
-- First-order quantification (`∀` and `∃`) and standard logical connectives (`->`, `&`, `~`, etc...)
+- First-order quantification (`∀` and `∃`) and standard logical connectives (`->`, `∧`, `∨`, `¬`, etc...)
 - Axiomatic reasoning
 - Logical query evaluation (true/false)
 
 ## Example
 
 ```Logik
-TYPES {
-  User: {alice, bob, charlie}
-  Role: {admin, client}
-}
-  
+# Types
+User: {alice, bob, charlie}
+Role: {admin, client}
 
-FUNCTIONS {
-  roleOf: User -> Role
-  managerOf: User -> User
-  delegated: User.User -> boolean
-  authorized: User -> boolean
-  access: User -> boolean
-}
+# Predicates
+isRoleOf: User.Role
+isManagerOf: User.User
+delegated: User.User
+authorized: User
+access: User
 
-AXIOMS {
-  ∀u ∈ User, roleOf(u) = admin => authorized(u)
-  ∀u,v ∈ User.User, authorized(u) ∧ delegated(u,v) => authorized(v)
-  ∀u ∈ User, authorized(managerOf(u)) => authorized(u)
-  ∀u ∈ User, authorized(u) => access(u)
-}
+# Universal axioms
+∀u ∈ User, isRoleOf(u, admin) -> authorized(u)
+∀u ∈ User, ∀v ∈ User, authorized(u) ∧ delegated(u,v) -> authorized(v)
+∀u ∈ User, authorized(managerOf(u)) -> authorized(u)
+∀u ∈ User, authorized(u) -> access(u)
 
-INIT {
-  roleOf(alice) := admin
-  managerOf(charlie) := bob
-  delegated(alice, bob)
-  authorized(alice)
-  authorized(bob)
-}
+# Initialisation
+roleOf(alice) := admin
+managerOf(charlie) := bob
+delegated(alice, bob) := T
+authorized(alice) := T
+authorized(bob) := T
+```
 
-QUERY {
-  access(alice)
-  access(bob)
-  authorized(charlie)
-}
+And then we can query the system:
+
+```Logik
+query access(alice)
+query access(bob)
+query authorized(charlie)
+query ∃u ∈ User, access(u)
+query ∃u ∈ User, access(u) ∧ ¬isRoleOf(u, admin)
 ```
