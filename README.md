@@ -24,12 +24,12 @@
 ty User: {alice, bob, charlie}
 ty Role: {admin, client}
 
-# Functions
-fn isRoleOf: User.Role 
-fn isManagerOf: User.User 
-fn delegated: User.User
-fn authorized: User
-fn access: User
+# Predicates
+pre isRoleOf: User.Role 
+pre isManagerOf: User.User 
+pre delegated: User.User
+pre authorized: User
+pre access: User
 
 # Initial facts
 fact isRoleOf(alice, admin)
