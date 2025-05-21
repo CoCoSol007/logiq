@@ -26,26 +26,15 @@ ty Role: {admin, client}
 
 # Predicates
 pre isRoleOf: User.Role 
-pre isManagerOf: User.User 
-pre delegated: User.User
-pre authorized: User
-pre access: User
+pre isManagerOf: User.User
+pre delegated: User.User 
+pre authorized: User <- authorized(x1) ∨ (delegated(X, x1) ∧ authorized(X))
+pre access: User <- authorized(x1)
 
 # Initial facts
 fact isRoleOf(alice, admin)
 fact isManagerOf(bob, alice)
 fact delegated(charlie, bob)
-
-# Rules
-rule authorized_if_admin:
-  ∀u ∈ User, roleOf(u, admin) => authorized(u)
-
-rule authorization_delegation:
-  ∀a ∈ User, ∀b ∈ User,
-    delegated(a, b) ∧ authorized(a) => authorized(b)
-
-rule access_requires_auth:
-  ∀u ∈ User, authorized(u) => access(u)
 ```
 
 And then we can query the system:
