@@ -19,28 +19,114 @@
 
 ## Example
 
-```Logik
-# Types
-ty User: {alice, bob, charlie}
-ty Role: {admin, client}
+### Basics
+```lgk
+# Create a new type
+User: {alice}.
 
-# Predicates
-pre isRoleOf: User.Role 
-pre isManagerOf: User.User
-pre delegated: User.User 
-pre authorized: User <- authorized(x1) ∨ (delegated(X, x1) ∧ authorized(X))
-pre access: User <- authorized(x1)
+# Create predicates
+pre isAdmin: User.
 
-# Initial facts
-fact isRoleOf(alice, admin)
-fact isManagerOf(bob, alice)
-fact delegated(charlie, bob)
+isAdmin(alice).
 ```
 
-And then we can query the system:
+then we request the DB
 
-```Logik
-? access(alice)
-? access(bob)
-? authorized(charlie)
+```lgk
+isAdmin(alice)? # True
+```
+
+### Define a predicate
+
+```lgk
+# Create a new type
+Interupter: {interupter1}.
+
+# Create predicates
+pre isOn: Interupter.
+pre isOff: Interupter :-
+	!isOn(x1).
+
+isOn(interupter1).
+```
+
+then we request the DB
+
+```lgk
+isOff(interupter1)? # False
+```
+### Multi-predicates
+
+```lgk
+# Create a new types
+User: {alice, bob, moi}.
+Role: {Admin, client}.
+
+# Create predicates
+pre isAdmin: User.
+pre delegated: User, User.
+pre isAuthorized: User :- 
+	  isAdmin(x1)
+	| (delegated(X, x1) & isAdmin(X)).
+
+# Initial facts
+isAdmin(alice).
+delegated(alice, moi).
+```
+And then we request
+```
+isAdmin(moi)? # False
+isAdmin(alice)? # true
+isAuthorized(moi)? # True
+```
+
+### Multi-predicates with recursion
+
+```lgk
+# Create a new types
+User: {alice, bob, moi}.
+Role: {Admin, client}.
+
+# Create predicates
+pre isAdmin: User.
+pre delegated: User, User.
+pre isAuthorized: User :- 
+	  isAdmin(x1)
+	| (delegated(X, x1) & isAuthorized(X)).
+
+# Initial facts
+isAdmin(alice).
+delegated(alice, moi).
+delegated(moi, bob).
+```
+And then we request
+```
+isAdmin(moi)? # False
+isAdmin(bob)? # False
+isAdmin(alice)? # true
+isAuthorized(moi)? # True
+isAuthorized(bob)? # True
+```
+
+### Generics in request
+```lgk
+# Create a new types
+User: {alice, bob, charlie, zoe}.
+
+# Create predicates
+pre link: User, User.
+pre isFriend: User, User :-
+	  link(x1, x2)
+	| link(x2, x1).
+
+link(alice, bob).
+link(charlie, bob).
+link(zoe, charlie).
+```
+
+request
+
+```
+isFriend(X, bob)?
+		# alice & charlie
 ```
