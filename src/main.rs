@@ -3,6 +3,8 @@
 use logik::cli::Cli;
 use std::fs;
 
+use chumsky::Parser;
+
 fn main() {
     let cli = <Cli as clap::Parser>::parse();
 
@@ -16,5 +18,7 @@ fn main() {
         return;
     }
 
-    let _file_content = file_content_result.unwrap();
+    let file_content = file_content_result.unwrap();
+    let parser = logik::parser::parser();
+    let _ast = parser.parse(&file_content).unwrap();
 }
