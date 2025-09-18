@@ -6,19 +6,18 @@ use chumsky::{
     text,
 };
 
-use crate::PropositionGeneralForm;
+use crate::Proposition;
 
 /// Parses a logical expression from a string input.
-pub fn parser<'src>() -> impl Parser<'src, &'src str, PropositionGeneralForm> {
+pub fn parser<'src>() -> impl Parser<'src, &'src str, Proposition> {
     recursive(|expr| {
         // Variables: a-z, A-Z, _
-        let variable =
-            text::ident().map(|name: &str| PropositionGeneralForm::Variable(name.to_string()));
+        let variable = text::ident().map(|name: &str| Proposition::Variable(name.to_string()));
 
         // Constants: true / false
         let boolean = text::keyword("T")
-            .to(PropositionGeneralForm::Value(true))
-            .or(text::keyword("F").to(PropositionGeneralForm::Value(false)));
+            .to(Proposition::Value(true))
+            .or(text::keyword("F").to(Proposition::Value(false)));
 
         let atom = boolean
             .or(variable)
@@ -29,7 +28,7 @@ pub fn parser<'src>() -> impl Parser<'src, &'src str, PropositionGeneralForm> {
             just("not")
                 .padded()
                 .then(not_expr.clone())
-                .map(|(_, e)| PropositionGeneralForm::Not(Box::new(e)))
+                .map(|(_, e)| Proposition::Not(Box::new(e)))
                 .or(atom.clone())
         });
 
@@ -44,7 +43,7 @@ pub fn parser<'src>() -> impl Parser<'src, &'src str, PropositionGeneralForm> {
             )
             .map(|(first, rest)| {
                 rest.into_iter().fold(first, |acc, e| {
-                    PropositionGeneralForm::And(Box::new(acc), Box::new(e.1))
+                    Proposition::And(Box::new(acc), Box::new(e.1))
                 })
             });
 
@@ -59,7 +58,7 @@ pub fn parser<'src>() -> impl Parser<'src, &'src str, PropositionGeneralForm> {
             )
             .map(|(first, rest)| {
                 rest.into_iter().fold(first, |acc, e| {
-                    PropositionGeneralForm::Or(Box::new(acc), Box::new(e.1))
+                    Proposition::Or(Box::new(acc), Box::new(e.1))
                 })
             });
 
@@ -74,14 +73,14 @@ pub fn parser<'src>() -> impl Parser<'src, &'src str, PropositionGeneralForm> {
             )
             .map(|(first, rest)| {
                 rest.into_iter().fold(first, |acc, e| {
-                    PropositionGeneralForm::Or(
-                        Box::new(PropositionGeneralForm::And(
+                    Proposition::Or(
+                        Box::new(Proposition::And(
                             Box::new(acc.clone()),
                             Box::new(e.1.clone()),
                         )),
-                        Box::new(PropositionGeneralForm::And(
-                            Box::new(PropositionGeneralForm::Not(Box::new(acc))),
-                            Box::new(PropositionGeneralForm::Not(Box::new(e.1))),
+                        Box::new(Proposition::And(
+                            Box::new(Proposition::Not(Box::new(acc))),
+                            Box::new(Proposition::Not(Box::new(e.1))),
                         )),
                     )
                 })
@@ -98,10 +97,7 @@ pub fn parser<'src>() -> impl Parser<'src, &'src str, PropositionGeneralForm> {
             )
             .map(|(first, rest)| {
                 rest.into_iter().fold(first, |acc, e| {
-                    PropositionGeneralForm::Or(
-                        Box::new(PropositionGeneralForm::Not(Box::new(acc))),
-                        Box::new(e.1),
-                    )
+                    Proposition::Or(Box::new(Proposition::Not(Box::new(acc))), Box::new(e.1))
                 })
             });
 

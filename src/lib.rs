@@ -18,15 +18,15 @@ pub mod parser;
 /// );
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum PropositionGeneralForm {
+pub enum Proposition {
     /// Represents a negation of an expression.
-    Not(Box<PropositionGeneralForm>),
+    Not(Box<Proposition>),
 
     /// Represents a logical AND operation between two expressions.
-    And(Box<PropositionGeneralForm>, Box<PropositionGeneralForm>),
+    And(Box<Proposition>, Box<Proposition>),
 
     /// Represents a logical OR operation between two expressions.
-    Or(Box<PropositionGeneralForm>, Box<PropositionGeneralForm>),
+    Or(Box<Proposition>, Box<Proposition>),
 
     /// Represents a boolean value.
     Value(bool),
@@ -35,25 +35,25 @@ pub enum PropositionGeneralForm {
     Variable(String),
 }
 
-impl fmt::Display for PropositionGeneralForm {
+impl fmt::Display for Proposition {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fn fmt_rec(expr: &PropositionGeneralForm) -> String {
+        fn fmt_rec(expr: &Proposition) -> String {
             match expr {
-                PropositionGeneralForm::Variable(name) => name.clone(),
-                PropositionGeneralForm::Value(val) => {
+                Proposition::Variable(name) => name.clone(),
+                Proposition::Value(val) => {
                     if *val {
                         "T".to_string()
                     } else {
                         "F".to_string()
                     }
                 }
-                PropositionGeneralForm::Not(inner) => {
+                Proposition::Not(inner) => {
                     format!("¬{}", fmt_rec(inner))
                 }
-                PropositionGeneralForm::And(lhs, rhs) => {
+                Proposition::And(lhs, rhs) => {
                     format!("({} ∧ {})", fmt_rec(lhs), fmt_rec(rhs))
                 }
-                PropositionGeneralForm::Or(lhs, rhs) => {
+                Proposition::Or(lhs, rhs) => {
                     format!("({} ∨ {})", fmt_rec(lhs), fmt_rec(rhs))
                 }
             }
