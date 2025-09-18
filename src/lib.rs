@@ -1,11 +1,15 @@
-//! ToDo
+//! Logik: A library for parsing and manipulating logical propositions
 
 use core::fmt;
 
 pub mod cli;
 pub mod parser;
 
-/// Represents a logical expression.
+/// Represents a logical proposition in standard form.
+///
+/// A proposition can be a variable, a boolean constant, or a compound expression
+/// built from NOT, AND, and OR operations. This enum supports the full range of
+/// propositional logic expressions.
 ///
 /// Examples
 ///
@@ -60,5 +64,59 @@ impl fmt::Display for Proposition {
         }
 
         write!(f, "{}", fmt_rec(self))
+    }
+}
+
+/// Represents a logical proposition in Negation Normal Form (NNF).
+///
+/// In NNF, negations are pushed down to the atomic level, meaning NOT operations
+/// can only be applied directly to variables, not to compound expressions.
+/// This form is useful for certain logical algorithms and simplifications.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum PropositionNNF {
+    /// Represents a negation of an expression.
+    Not(String),
+
+    /// Represents a logical AND operation between two expressions.
+    And(Box<PropositionNNF>, Box<PropositionNNF>),
+
+    /// Represents a logical OR operation between two expressions.
+    Or(Box<PropositionNNF>, Box<PropositionNNF>),
+
+    /// Represents a boolean value.
+    Value(bool),
+
+    /// Represents a variable in the expression.
+    Variable(String),
+}
+
+impl From<Proposition> for PropositionNNF {
+    fn from(value: Proposition) -> Self {
+        match value {
+            Proposition::And(a, b) => Self::And(
+                Box::new(PropositionNNF::from(*a)),
+                Box::new(PropositionNNF::from(*b)),
+            ),
+            Proposition::Or(a, b) => Self::Or(
+                Box::new(PropositionNNF::from(*a)),
+                Box::new(PropositionNNF::from(*b)),
+            ),
+            Proposition::Value(v) => Self::Value(v),
+            Proposition::Variable(v) => Self::Variable(v),
+
+            Proposition::Not(proposition) => match *proposition {
+                Proposition::And(a, b) => Self::Or(
+                    Box::new(Proposition::Not(a).into()),
+                    Box::new(Proposition::Not(b).into()),
+                ),
+                Proposition::Or(a, b) => Self::And(
+                    Box::new(Proposition::Not(a).into()),
+                    Box::new(Proposition::Not(b).into()),
+                ),
+                Proposition::Not(a) => PropositionNNF::from(*a),
+                Proposition::Value(v) => PropositionNNF::Value(!v),
+                Proposition::Variable(s) => PropositionNNF::Not(s),
+            },
+        }
     }
 }
