@@ -1,15 +1,15 @@
 //! Main entry point for the logik DSL.
 
-use std::{env, fs};
+use logik::cli::Cli;
+use std::fs;
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let Some(path) = args.get(1) else {
-        println!("You must provid a file path: logik <File Path>");
-        return;
-    };
+    let cli = <Cli as clap::Parser>::parse();
 
-    let file_content_result = fs::read_to_string(path);
+    let file_content_result = match cli {
+        Cli::RunFile { path } => fs::read_to_string(path),
+        Cli::Run { expr } => Ok(expr),
+    };
 
     if let Err(error) = file_content_result {
         println!("Error: {}", error);
