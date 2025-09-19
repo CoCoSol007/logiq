@@ -1,7 +1,8 @@
 //! CLI for Logik
 
-use clap::Parser;
 use std::path::PathBuf;
+
+use clap::Parser;
 
 /// Logik: a parser and evaluator for logical expressions.
 #[derive(Parser)]

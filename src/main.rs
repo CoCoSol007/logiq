@@ -1,9 +1,10 @@
 //! Main entry point for the logik DSL.
 
-use logik::{PropositionNNF, cli::Cli};
 use std::fs;
 
 use chumsky::Parser;
+use logik::PropositionNNF;
+use logik::cli::Cli;
 
 fn main() {
     let cli = <Cli as clap::Parser>::parse();
@@ -21,5 +22,6 @@ fn main() {
     let file_content = file_content_result.unwrap();
     let parser = logik::parser::parser();
     let ast = parser.parse(&file_content).unwrap();
-    let _nnf = PropositionNNF::from(ast);
+    let nnf = PropositionNNF::from(ast);
+    println!("{}", nnf);
 }

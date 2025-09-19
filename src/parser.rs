@@ -1,10 +1,7 @@
 //! TODO
 
-use chumsky::{
-    IterParser, Parser,
-    prelude::{just, recursive},
-    text,
-};
+use chumsky::prelude::{just, recursive};
+use chumsky::{IterParser, Parser, text};
 
 use crate::Proposition;
 
@@ -100,7 +97,6 @@ pub fn parser<'src>() -> impl Parser<'src, &'src str, Proposition> {
                     Proposition::Or(Box::new(Proposition::Not(Box::new(acc))), Box::new(e.1))
                 })
             });
-
         impl_expr
     })
 }
