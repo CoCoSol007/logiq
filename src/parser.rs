@@ -97,6 +97,22 @@ pub fn parser<'src>() -> impl Parser<'src, &'src str, Proposition> {
                     Proposition::Or(Box::new(Proposition::Not(Box::new(acc))), Box::new(e.1))
                 })
             });
-        impl_expr
+
+        let rule_expr = impl_expr
+            .clone()
+            .then(
+                just("\n")
+                    .repeated()
+                    .then(impl_expr.clone())
+                    .repeated()
+                    .collect::<Vec<_>>(),
+            )
+            .map(|(first, rest)| {
+                rest.into_iter().fold(first, |acc, e| {
+                    Proposition::And(Box::new(acc), Box::new(e.1))
+                })
+            });
+
+        rule_expr
     })
 }

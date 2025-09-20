@@ -20,8 +20,18 @@ fn main() {
     }
 
     let file_content = file_content_result.unwrap();
+
+    let mut usable_line = vec![];
+    for line in file_content.split("\n") {
+        if !line.starts_with("//") {
+            usable_line.push(line.split("//").next().unwrap_or_default());
+        }
+    }
+
+    let text = usable_line.join("\n");
+
     let parser = logik::parser::parser();
-    let ast = parser.parse(&file_content).unwrap();
+    let ast = parser.parse(&text).unwrap();
     let nnf = PropositionNNF::from(ast);
     println!("{}", nnf);
 }
