@@ -17,6 +17,8 @@
 
 Logik is a Domain-Specific Language (DSL) designed for expressing and solving Boolean satisfiability (SAT) problems. The project provides an intuitive syntax for writing logical propositions and automatically determines their satisfiability using advanced SAT solving algorithms.
 
+**Important**: Note that if you eval a set of rules, if a variable is not mentioned in the results, it means it can take any value (true or false) without affecting the satisfiability of the expression.
+
 ## Installation
 To do
 
