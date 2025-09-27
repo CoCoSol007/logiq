@@ -4,6 +4,7 @@ use core::fmt;
 use std::fmt::Display;
 
 pub mod cli;
+pub mod lexer;
 pub mod parser;
 
 /// Represents a logical proposition in standard form.

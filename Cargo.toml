@@ -4,8 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+ariadne = "0.5.1"
 chumsky = "0.11.1"
 clap = { version = "4.5.47", features = ["derive"] }
+logos = "0.15.1"
 
 [lints.rust]
 missing_docs = "warn"
