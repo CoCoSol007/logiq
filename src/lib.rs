@@ -1,6 +1,6 @@
 //! Logik: A library for parsing and manipulating logical propositions
 
-use crate::clause::optimized_clauses_from_clauses;
+use crate::clause::simplificated_clauses_from_clauses;
 use crate::proposition::{Proposition, PropositionCNF, PropositionNNF};
 
 pub mod clause;
@@ -40,8 +40,8 @@ impl From<Vec<Proposition>> for Solution {
             clauses.extend(new_clauses.drain(..));
         }
 
-        let optimized_clauses = optimized_clauses_from_clauses(clauses);
-        for element in &optimized_clauses {
+        let simplificated_clauses = simplificated_clauses_from_clauses(clauses);
+        for element in &simplificated_clauses {
             println!("{}", element);
         }
 

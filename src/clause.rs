@@ -53,10 +53,10 @@ impl Display for Clause {
     }
 }
 
-/// Represents an optimized atomic proposition, which can be a variable or its
-/// negation.
+/// Represents an simplificated atomic proposition, which can be a variable or
+/// its negation.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum OptimizedAtom {
+pub enum SimplificatedAtom {
     /// A positive variable.
     Var(String),
 
@@ -64,11 +64,11 @@ pub enum OptimizedAtom {
     NotVar(String),
 }
 
-/// An optimized clause is a disjunction of optimized atoms.
+/// An simplificated clause is a disjunction of simplificated atoms.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct OptimizedClause(pub HashSet<OptimizedAtom>);
+pub struct SimplificatedClause(pub HashSet<SimplificatedAtom>);
 
-impl Hash for OptimizedClause {
+impl Hash for SimplificatedClause {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         // To ensure that the hash is independent of the order of atoms in the
         // clause, we can sum the hashes of individual atoms.
@@ -89,7 +89,7 @@ impl Hash for OptimizedClause {
 }
 
 /// Optimizes a list of clauses by applying simplification rules.
-pub fn optimized_clauses_from_clauses(clauses: Vec<Clause>) -> HashSet<OptimizedClause> {
+pub fn simplificated_clauses_from_clauses(clauses: Vec<Clause>) -> HashSet<SimplificatedClause> {
     // Rules 1 : If there is a T in the clause, the clause is always true ->
     // Remove the entire clause.
     // Rule 2 : If there is a F in the clause, remove it from the clause.
@@ -97,15 +97,15 @@ pub fn optimized_clauses_from_clauses(clauses: Vec<Clause>) -> HashSet<Optimized
     // clause is always true -> Remove the entire clause.
 
     // Aply rule 1 and 2
-    let mut filtered_clauses: Vec<OptimizedClause> = Vec::new();
+    let mut filtered_clauses: Vec<SimplificatedClause> = Vec::new();
     'outer: for clause in clauses {
-        let mut new_clause = OptimizedClause(HashSet::new());
+        let mut new_clause = SimplificatedClause(HashSet::new());
         for atom in &clause.0 {
             let new_atom = match atom {
                 Atom::Value(true) => continue 'outer,
                 Atom::Value(false) => continue,
-                Atom::Var(name) => OptimizedAtom::Var(name.clone()),
-                Atom::NotVar(name) => OptimizedAtom::NotVar(name.clone()),
+                Atom::Var(name) => SimplificatedAtom::Var(name.clone()),
+                Atom::NotVar(name) => SimplificatedAtom::NotVar(name.clone()),
             };
             new_clause.0.insert(new_atom);
         }
@@ -115,31 +115,31 @@ pub fn optimized_clauses_from_clauses(clauses: Vec<Clause>) -> HashSet<Optimized
     }
 
     // Aply rule 3
-    let mut optimized_clauses: Vec<OptimizedClause> = Vec::new();
+    let mut simplificated_clauses: Vec<SimplificatedClause> = Vec::new();
     'outer: for clause in filtered_clauses {
         for atom in &clause.0 {
             let negated_atom = match atom {
-                OptimizedAtom::Var(name) => OptimizedAtom::NotVar(name.clone()),
-                OptimizedAtom::NotVar(name) => OptimizedAtom::Var(name.clone()),
+                SimplificatedAtom::Var(name) => SimplificatedAtom::NotVar(name.clone()),
+                SimplificatedAtom::NotVar(name) => SimplificatedAtom::Var(name.clone()),
             };
             if clause.0.contains(&negated_atom) {
                 continue 'outer;
             }
         }
-        optimized_clauses.push(clause);
+        simplificated_clauses.push(clause);
     }
 
-    optimized_clauses.into_iter().collect()
+    simplificated_clauses.into_iter().collect()
 }
 
-impl Display for OptimizedClause {
+impl Display for SimplificatedClause {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let atoms: Vec<String> = self
             .0
             .iter()
             .map(|atom| match atom {
-                OptimizedAtom::Var(name) => name.clone(),
-                OptimizedAtom::NotVar(name) => format!("¬{}", name),
+                SimplificatedAtom::Var(name) => name.clone(),
+                SimplificatedAtom::NotVar(name) => format!("¬{}", name),
             })
             .collect();
         write!(f, "{}", atoms.join(" ∨ "))
