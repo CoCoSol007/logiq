@@ -53,6 +53,14 @@ fn main() {
     let parser = logik::parser::parser();
     match parser.parse(tokens_type.as_slice()).into_result() {
         Ok(propositions) => {
+            Report::build(
+                ReportKind::Custom("Info", ariadne::Color::Green),
+                (path.clone(), 0..0),
+            )
+            .with_message("Lexing & Parsing Successful")
+            .finish()
+            .print((path.clone(), Source::from(&content)))
+            .unwrap();
             for proposition in propositions {
                 println!("AST: {}", proposition);
             }
@@ -76,6 +84,8 @@ fn handle_error_file(
                 Some(t_end) => t_start.span.start..t_end.span.end,
                 None => t_start.span.start..t_start.span.end,
             },
+            // We suppose that if there is no the element in the tokens vector, the error
+            // is about a missing token at the end of the vector.
             None => tokens
                 .last()
                 .map(|t| t.span.end..(t.span.end))
