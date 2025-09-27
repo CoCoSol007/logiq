@@ -6,8 +6,10 @@ use std::process::exit;
 use ariadne::{Label, Report, ReportKind, Source};
 use chumsky::Parser;
 use chumsky::error::Rich;
+use logik::clause::Clause;
 use logik::cli::Cli;
 use logik::lexer::TokenType;
+use logik::proposition::{PropositionCNF, PropositionNNF};
 use logos::Logos;
 
 fn main() {
@@ -62,7 +64,11 @@ fn main() {
             .print((path.clone(), Source::from(&content)))
             .unwrap();
             for proposition in propositions {
-                println!("AST: {}", proposition);
+                for clause in
+                    Clause::from_cnf(PropositionCNF::from_nnf(PropositionNNF::from(proposition)))
+                {
+                    println!("CNF Clause: {}", clause);
+                }
             }
         }
         Err(errors) => handle_error_file(errors, &path, &content, &tokens),

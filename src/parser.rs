@@ -4,8 +4,8 @@ use chumsky::error::Rich;
 use chumsky::prelude::{just, recursive};
 use chumsky::{IterParser, Parser, extra, select};
 
-use crate::Proposition;
 use crate::lexer::TokenType;
+use crate::proposition::Proposition;
 
 /// Returns a parser for logical expressions.
 pub fn parser<'src>()
