@@ -155,4 +155,23 @@ C <-> D
 ```
 
 ### Results interpretation
-To do
+The output will indicate whether the expression is satisfiable and provide all possible assignments of variables if it is.
+
+for example, for ``logik run "A and Not A"``:
+```
+The proposition is unsatisfiable.
+```
+
+But for ``logik run "A <-> B"``:
+```
+The proposition is satisfiable.
+Possible assignments:
+
+-- Possibility #1 --
+  A = true
+  B = true
+
+-- Possibility #2 --
+  A = false
+  B = false
+```
