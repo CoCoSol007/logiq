@@ -61,7 +61,24 @@ fn main() {
             .finish()
             .print((path.clone(), Source::from(&content)))
             .unwrap();
-            let _: logik::Solution = propositions.into();
+            let solution: logik::Solution = propositions.into();
+
+            if solution.is_satisfiable() {
+                println!("\nThe proposition is satisfiable.");
+                println!("Possible assignments:\n");
+
+                for (i, possibility) in solution.assignments.iter().enumerate() {
+                    println!("-- Possibility #{} --", i + 1);
+
+                    for (var, value) in &possibility.0 {
+                        println!("  {} = {}", var, value);
+                    }
+
+                    println!();
+                }
+            } else {
+                println!("\nThe proposition is unsatisfiable.");
+            }
         }
         Err(errors) => handle_error_file(errors, &path, &content, &tokens),
     }

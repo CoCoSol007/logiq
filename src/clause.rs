@@ -64,6 +64,16 @@ pub enum SimplificatedAtom {
     NotVar(String),
 }
 
+impl SimplificatedAtom {
+    /// Returns the negation of the current atom.
+    pub fn negate(&self) -> Self {
+        match self {
+            SimplificatedAtom::Var(name) => SimplificatedAtom::NotVar(name.clone()),
+            SimplificatedAtom::NotVar(name) => SimplificatedAtom::Var(name.clone()),
+        }
+    }
+}
+
 /// An simplificated clause is a disjunction of simplificated atoms.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SimplificatedClause(pub HashSet<SimplificatedAtom>);
@@ -93,10 +103,7 @@ pub fn simplificated_clauses_from_clauses(clauses: Vec<Clause>) -> HashSet<Simpl
     // Rules 1 : If there is a T in the clause, the clause is always true ->
     // Remove the entire clause.
     // Rule 2 : If there is a F in the clause, remove it from the clause.
-    // Rule 3 : If there is a variable and its negation in the clause, the
-    // clause is always true -> Remove the entire clause.
 
-    // Aply rule 1 and 2
     let mut filtered_clauses: Vec<SimplificatedClause> = Vec::new();
     'outer: for clause in clauses {
         let mut new_clause = SimplificatedClause(HashSet::new());
@@ -114,22 +121,7 @@ pub fn simplificated_clauses_from_clauses(clauses: Vec<Clause>) -> HashSet<Simpl
         }
     }
 
-    // Aply rule 3
-    let mut simplificated_clauses: Vec<SimplificatedClause> = Vec::new();
-    'outer: for clause in filtered_clauses {
-        for atom in &clause.0 {
-            let negated_atom = match atom {
-                SimplificatedAtom::Var(name) => SimplificatedAtom::NotVar(name.clone()),
-                SimplificatedAtom::NotVar(name) => SimplificatedAtom::Var(name.clone()),
-            };
-            if clause.0.contains(&negated_atom) {
-                continue 'outer;
-            }
-        }
-        simplificated_clauses.push(clause);
-    }
-
-    simplificated_clauses.into_iter().collect()
+    filtered_clauses.into_iter().collect()
 }
 
 impl Display for SimplificatedClause {
