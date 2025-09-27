@@ -1,15 +1,16 @@
 //! Logik: A library for parsing and manipulating logical propositions
 
 use core::fmt;
+use std::fmt::Display;
 
 pub mod cli;
 pub mod parser;
 
 /// Represents a logical proposition in standard form.
 ///
-/// A proposition can be a variable, a boolean constant, or a compound expression
-/// built from NOT, AND, and OR operations. This enum supports the full range of
-/// propositional logic expressions.
+/// A proposition can be a variable, a boolean constant, or a compound
+/// expression built from NOT, AND, and OR operations. This enum supports the
+/// full range of propositional logic expressions.
 ///
 /// Examples
 ///
@@ -69,9 +70,10 @@ impl fmt::Display for Proposition {
 
 /// Represents a logical proposition in Negation Normal Form (NNF).
 ///
-/// In NNF, negations are pushed down to the atomic level, meaning NOT operations
-/// can only be applied directly to variables, not to compound expressions.
-/// This form is useful for certain logical algorithms and simplifications.
+/// In NNF, negations are pushed down to the atomic level, meaning NOT
+/// operations can only be applied directly to variables, not to compound
+/// expressions. This form is useful for certain logical algorithms and
+/// simplifications.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum PropositionNNF {
     /// Represents a negation of an expression.
@@ -118,5 +120,33 @@ impl From<Proposition> for PropositionNNF {
                 Proposition::Variable(s) => PropositionNNF::Not(s),
             },
         }
+    }
+}
+
+impl Display for PropositionNNF {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fn fmt_rec(expr: &PropositionNNF) -> String {
+            match expr {
+                PropositionNNF::Variable(name) => name.clone(),
+                PropositionNNF::Value(val) => {
+                    if *val {
+                        "T".to_string()
+                    } else {
+                        "F".to_string()
+                    }
+                }
+                PropositionNNF::Not(inner) => {
+                    format!("¬{}", inner)
+                }
+                PropositionNNF::And(lhs, rhs) => {
+                    format!("({} ∧ {})", fmt_rec(lhs), fmt_rec(rhs))
+                }
+                PropositionNNF::Or(lhs, rhs) => {
+                    format!("({} ∨ {})", fmt_rec(lhs), fmt_rec(rhs))
+                }
+            }
+        }
+
+        write!(f, "{}", fmt_rec(self))
     }
 }
