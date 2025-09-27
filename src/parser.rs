@@ -1,4 +1,4 @@
-//! TODO
+//! This module defines the parser for logical expressions.
 
 use chumsky::error::Rich;
 use chumsky::prelude::{just, recursive};
@@ -17,37 +17,27 @@ pub fn parser<'src>()
     .labelled("identifier");
 
     let expr = recursive(|expr| {
-        // 1. **Highest Priority: Atom (Literals, Variables, Parenthesized
-        //    Expressions)**
         let boolean = select!(
             TokenType::True => Proposition::Value(true),
             TokenType::False => Proposition::Value(false)
         )
         .labelled("'boolean'");
 
-        // Un 'atom' peut être un booléen, un identifiant ou une expression entre
-        // parenthèses.
         let atom = boolean
             .or(ident.clone().map(Proposition::Variable))
             .or(just(TokenType::LParen)
-                .ignore_then(expr.clone()) // Un expr complet à l'intérieur des parenthèses
+                .ignore_then(expr.clone())
                 .then_ignore(just(TokenType::RParen)))
             .labelled("atom");
 
-        // 2. **Priority 5: Not (Unary Operator)**
-        // Not lie directement aux atomes.
         let not_expr = recursive(|not_expr| {
             just(TokenType::Not)
                 .ignore_then(not_expr.clone().labelled("logical expression"))
                 .map(|inner| Proposition::Not(Box::new(inner)))
-                .or(atom.clone()) // Ou c'est simplement un atome
+                .or(atom.clone())
                 .labelled("'not' expression")
         });
 
-        // Les expressions qui suivent sont de plus en plus faibles et s'appuient sur le
-        // niveau de priorité supérieur.
-
-        // 3. **Priority 4: And**
         let and_expr = not_expr
             .clone()
             .labelled("left 'and' expression")
@@ -63,7 +53,6 @@ pub fn parser<'src>()
             })
             .labelled("'and' expression");
 
-        // 4. **Priority 3: Or**
         let or_expr = and_expr
             .clone()
             .labelled("left 'or' expression")

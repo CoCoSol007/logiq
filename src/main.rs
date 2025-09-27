@@ -12,12 +12,12 @@ use logos::Logos;
 
 fn main() {
     let cli = <Cli as clap::Parser>::parse();
-    let mut path = None;
+    let mut path: String = "<input>".into();
 
     let file_content_result = match cli {
         Cli::RunFile { path: p } => {
-            path = Some(p.clone());
-            fs::read_to_string(p)
+            path = p.to_str().unwrap_or("<input>").into();
+            fs::read_to_string(p.clone())
         }
         Cli::Run { expr } => Ok(expr),
     };
@@ -34,17 +34,11 @@ fn main() {
 
     for (result_token_type, span) in TokenType::lexer(&content).spanned() {
         let Ok(token_type) = result_token_type else {
-            let file_path = match &path {
-                Some(p) => p.to_string_lossy(),
-                None => "<input>".into(),
-            };
-            Report::build(ReportKind::Error, (file_path.clone(), span.clone()))
+            Report::build(ReportKind::Error, (path.clone(), span.clone()))
                 .with_message("Lexing Error")
-                .with_label(
-                    Label::new((file_path.clone(), span)).with_message("unrecognized token"),
-                )
+                .with_label(Label::new((path.clone(), span)).with_message("unrecognized token"))
                 .finish()
-                .print((file_path, Source::from(&content)))
+                .print((path.clone(), Source::from(&content)))
                 .unwrap();
             exit(1);
         };
@@ -53,21 +47,17 @@ fn main() {
             span,
         };
         tokens_type.push(token_type.clone());
-        println!("{:?} at {:?}", token.token_type, token.span);
         tokens.push(token);
     }
 
     let parser = logik::parser::parser();
     match parser.parse(tokens_type.as_slice()).into_result() {
-        Ok(ast) => {
-            for proposition in ast {
+        Ok(propositions) => {
+            for proposition in propositions {
                 println!("AST: {}", proposition);
             }
         }
-        Err(errors) => match &path {
-            Some(p) => handle_error_file(errors, &p.to_string_lossy(), &content, &tokens),
-            None => handle_error_file(errors, "<input>", &content, &tokens),
-        },
+        Err(errors) => handle_error_file(errors, &path, &content, &tokens),
     }
 }
 
