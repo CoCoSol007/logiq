@@ -24,11 +24,11 @@ pub enum TokenType {
     Not,
 
     /// Boolean true
-    #[token("true")]
+    #[token("T")]
     True,
 
     /// Boolean false
-    #[token("false")]
+    #[token("F")]
     False,
 
     /// Left parenthesis for grouping
@@ -48,7 +48,7 @@ pub enum TokenType {
     Equivalent,
 
     /// An identifier (variable name)
-    #[regex("[a-zA-Z_][a-zA-Z0-9_]*", |lex| lex.slice().to_string())]
+    #[regex("[a-zA-Z_][a-zA-Z0-9_]*", |lex| lex.slice().to_string(), priority = 0)]
     Identifier(String),
 
     /// A new line character

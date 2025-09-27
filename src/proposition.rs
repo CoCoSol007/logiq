@@ -1,6 +1,7 @@
 //! All program based on logical propositions.
 
 use core::fmt;
+use std::collections::HashSet;
 use std::fmt::Display;
 
 use crate::clause::Atom;
@@ -199,7 +200,7 @@ impl PropositionCNF {
     }
 
     /// Extracts the atoms from a CNF expression.
-    pub fn get_atoms(self) -> Vec<Atom> {
+    pub fn get_atoms(self) -> HashSet<Atom> {
         match self {
             PropositionCNF::Or(left, right) => {
                 let mut left = left.get_atoms();
@@ -209,9 +210,9 @@ impl PropositionCNF {
 
                 left
             }
-            PropositionCNF::Value(v) => vec![Atom::Value(v)],
-            PropositionCNF::Variable(s) => vec![Atom::Var(s)],
-            PropositionCNF::NotVariable(s) => vec![Atom::NotVar(s)],
+            PropositionCNF::Value(v) => HashSet::from([Atom::Value(v)]),
+            PropositionCNF::Variable(s) => HashSet::from([Atom::Var(s)]),
+            PropositionCNF::NotVariable(s) => HashSet::from([Atom::NotVar(s)]),
         }
     }
 }
