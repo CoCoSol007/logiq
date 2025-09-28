@@ -6,9 +6,18 @@ use std::process::exit;
 use ariadne::{Label, Report, ReportKind, Source};
 use chumsky::Parser;
 use chumsky::error::Rich;
-use logiq::cli::Cli;
-use logiq::lexer::TokenType;
 use logos::Logos;
+
+use crate::cli::Cli;
+use crate::lexer::TokenType;
+use crate::solver::Solution;
+
+mod clause;
+mod cli;
+mod lexer;
+mod parser;
+mod proposition;
+mod solver;
 
 fn main() {
     let cli = <Cli as clap::Parser>::parse();
@@ -42,7 +51,7 @@ fn main() {
                 .unwrap();
             exit(1);
         };
-        let token = logiq::lexer::Token {
+        let token = lexer::Token {
             token_type: token_type.clone(),
             span,
         };
@@ -50,7 +59,7 @@ fn main() {
         tokens.push(token);
     }
 
-    let parser = logiq::parser::parser();
+    let parser = parser::parser();
     match parser.parse(tokens_type.as_slice()).into_result() {
         Ok(propositions) => {
             Report::build(
@@ -61,7 +70,7 @@ fn main() {
             .finish()
             .print((path.clone(), Source::from(&content)))
             .unwrap();
-            let solution: logiq::Solution = propositions.into();
+            let solution: Solution = propositions.into();
 
             if solution.is_satisfiable() {
                 println!("\nThe proposition is satisfiable.");
@@ -90,7 +99,7 @@ fn handle_error_file(
     errors: Vec<Rich<TokenType>>,
     file_path: &str,
     source: &str,
-    tokens: &Vec<logiq::lexer::Token>,
+    tokens: &Vec<lexer::Token>,
 ) {
     for e in errors {
         let span_token_type: std::ops::Range<usize> = e.span().into_iter();

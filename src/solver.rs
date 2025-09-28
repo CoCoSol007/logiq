@@ -1,16 +1,12 @@
-//! logiq: A library for parsing and manipulating logical propositions
+//! Solver module for evaluating logical propositions.
 
 use std::collections::{HashMap, HashSet};
 use std::hash::{Hash, Hasher};
 
-use crate::clause::{SimplificatedAtom, SimplificatedClause, simplificated_clauses_from_clauses};
+use crate::clause::{
+    self, SimplificatedAtom, SimplificatedClause, simplificated_clauses_from_clauses,
+};
 use crate::proposition::{Proposition, PropositionCNF, PropositionNNF};
-
-pub mod clause;
-pub mod cli;
-pub mod lexer;
-pub mod parser;
-pub mod proposition;
 
 /// Represents the solution to a logical proposition evaluation.
 pub struct Solution {
