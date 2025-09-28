@@ -21,11 +21,6 @@ impl Solution {
     pub fn is_satisfiable(&self) -> bool {
         !self.assignments.is_empty()
     }
-
-    /// Checks if the proposition is unsatisfiable based on the assignments.
-    pub fn is_unsatisfiable(&self) -> bool {
-        self.assignments.is_empty()
-    }
 }
 
 impl From<Vec<Proposition>> for Solution {
