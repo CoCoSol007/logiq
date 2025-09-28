@@ -2,6 +2,41 @@
 name = "logik"
 version = "0.1.0"
 edition = "2024"
+description = "A logic SAT solver"
+repository = "https://github.com/CoCoSol007/logik"
+authors = ["CoCoSol"]
+license = "GPL-3.0"
+readme = "README.md"
+keywords = [
+    "logic",
+    "sat-solver",
+    "propositional-logic",
+    "symbolic-reasoning",
+    "automated-reasoning",
+    "artificial-intelligence",
+    "computational-logic",
+    "decision-procedures",
+]
+categories = [
+    "command-line-utilities",
+    "development-tools",
+    "science",
+    "algorithms",
+    "data-structures",
+    "logic",
+    "theorem-proving",
+]
+exclude = [
+    "/.git", 
+    "/target", 
+    "/.vscode", 
+    "/.idea", 
+    "/.github", 
+    "/rustfmt.toml", 
+    "/.gitignore", 
+    "/logo.png", 
+    "/LICENSE"
+]
 
 [dependencies]
 ariadne = "0.5.1"

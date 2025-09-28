@@ -6,7 +6,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <img src="logo.png" width="400">
+  <img src="https://raw.githubusercontent.com/CoCoSol007/logik/main/logo.png" width="400">
   <p align="center">
     <br />
     <strong>A Domain-Specific Language for SAT Solving</strong>
@@ -20,7 +20,11 @@ Logik is a Domain-Specific Language (DSL) designed for expressing and solving Bo
 **Important**: Note that if you eval a set of rules, if a variable is not mentioned in the results, it means it can take any value (true or false) without affecting the satisfiability of the expression.
 
 ## Installation
-To do
+If you have Rust and Cargo installed, you can install Logik using Cargo:
+```bash
+cargo install logik
+```
+
 
 ## Language Syntax
 
