@@ -11,17 +11,6 @@ use crate::clause::Atom;
 /// A proposition can be a variable, a boolean constant, or a compound
 /// expression built from NOT, AND, and OR operations. This enum supports the
 /// full range of propositional logic expressions.
-///
-/// Examples
-///
-/// ``` rust
-/// use logik::Expression;
-///
-/// let expr = Expression::And(
-///     Box::new(Expression::Variable("x".to_string())),
-///     Box::new(Expression::Value(true)),
-/// );
-/// ```
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Proposition {
     /// Represents a negation of an expression.
