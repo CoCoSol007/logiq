@@ -20,11 +20,9 @@ keywords = [
 categories = [
     "command-line-utilities",
     "development-tools",
-    "science",
-    "algorithms",
-    "data-structures",
+    "SAT-solvers",
     "logic",
-    "theorem-proving",
+    "rules-engines",
 ]
 exclude = [
     "/.git", 
