@@ -25,6 +25,7 @@ If you have Rust and Cargo installed, you can install logiq using Cargo:
 cargo install logiq
 ```
 
+Alternatively, you can download precompiled binaries from the [releases page](https://github.com/CoCoSol007/logiq/releases) based on your operating system.
 
 ## Language Syntax
 
