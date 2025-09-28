@@ -1,4 +1,4 @@
-//! Main entry point for the logik DSL.
+//! Main entry point for the logiq DSL.
 
 use std::fs;
 use std::process::exit;
@@ -6,8 +6,8 @@ use std::process::exit;
 use ariadne::{Label, Report, ReportKind, Source};
 use chumsky::Parser;
 use chumsky::error::Rich;
-use logik::cli::Cli;
-use logik::lexer::TokenType;
+use logiq::cli::Cli;
+use logiq::lexer::TokenType;
 use logos::Logos;
 
 fn main() {
@@ -42,7 +42,7 @@ fn main() {
                 .unwrap();
             exit(1);
         };
-        let token = logik::lexer::Token {
+        let token = logiq::lexer::Token {
             token_type: token_type.clone(),
             span,
         };
@@ -50,7 +50,7 @@ fn main() {
         tokens.push(token);
     }
 
-    let parser = logik::parser::parser();
+    let parser = logiq::parser::parser();
     match parser.parse(tokens_type.as_slice()).into_result() {
         Ok(propositions) => {
             Report::build(
@@ -61,7 +61,7 @@ fn main() {
             .finish()
             .print((path.clone(), Source::from(&content)))
             .unwrap();
-            let solution: logik::Solution = propositions.into();
+            let solution: logiq::Solution = propositions.into();
 
             if solution.is_satisfiable() {
                 println!("\nThe proposition is satisfiable.");
@@ -90,7 +90,7 @@ fn handle_error_file(
     errors: Vec<Rich<TokenType>>,
     file_path: &str,
     source: &str,
-    tokens: &Vec<logik::lexer::Token>,
+    tokens: &Vec<logiq::lexer::Token>,
 ) {
     for e in errors {
         let span_token_type: std::ops::Range<usize> = e.span().into_iter();

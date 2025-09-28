@@ -1,12 +1,12 @@
-//! CLI for Logik
+//! CLI for logiq
 
 use std::path::PathBuf;
 
 use clap::Parser;
 
-/// Logik: a parser and evaluator for logical expressions.
+/// logiq: a parser and evaluator for logical expressions.
 #[derive(Parser)]
-#[command(name = "logik", about = "A DSL for first-order logic.")]
+#[command(name = "logiq", about = "A DSL for first-order logic.")]
 pub enum Cli {
     /// Evaluate a logical expression from a file.
     RunFile {

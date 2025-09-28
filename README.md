@@ -6,7 +6,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <img src="https://raw.githubusercontent.com/CoCoSol007/logik/main/logo.png" width="400">
+  <img src="https://raw.githubusercontent.com/CoCoSol007/logiq/main/logo.png" width="400">
   <p align="center">
     <br />
     <strong>A Domain-Specific Language for SAT Solving</strong>
@@ -15,14 +15,14 @@
 
 ## About The Project
 
-Logik is a Domain-Specific Language (DSL) designed for expressing and solving Boolean satisfiability (SAT) problems. The project provides an intuitive syntax for writing logical propositions and automatically determines their satisfiability using advanced SAT solving algorithms.
+logiq is a Domain-Specific Language (DSL) designed for expressing and solving Boolean satisfiability (SAT) problems. The project provides an intuitive syntax for writing logical propositions and automatically determines their satisfiability using advanced SAT solving algorithms.
 
 **Important**: Note that if you eval a set of rules, if a variable is not mentioned in the results, it means it can take any value (true or false) without affecting the satisfiability of the expression.
 
 ## Installation
-If you have Rust and Cargo installed, you can install Logik using Cargo:
+If you have Rust and Cargo installed, you can install logiq using Cargo:
 ```bash
-cargo install logik
+cargo install logiq
 ```
 
 
@@ -138,12 +138,12 @@ This is equivalent to solving the conjunction: `(A or B) and (not A or C) and (B
 
 Run a logical expression directly:
 ```bash
-logik run "A and B or not C"
+logiq run "A and B or not C"
 ```
 
 Parse and evaluate from a file:
 ```bash
-logik run-file examples/puzzle.logic
+logiq run-file examples/puzzle.logic
 ```
 
 ### File Format
@@ -163,12 +163,12 @@ C <-> D
 ### Results interpretation
 The output will indicate whether the expression is satisfiable and provide all possible assignments of variables if it is.
 
-for example, for ``logik run "A and Not A"``:
+for example, for ``logiq run "A and Not A"``:
 ```
 The proposition is unsatisfiable.
 ```
 
-But for ``logik run "A <-> B"``:
+But for ``logiq run "A <-> B"``:
 ```
 The proposition is satisfiable.
 Possible assignments:

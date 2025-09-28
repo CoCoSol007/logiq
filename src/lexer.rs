@@ -1,4 +1,4 @@
-//! Lexer for the logik DSL.
+//! Lexer for the logiq DSL.
 
 use core::fmt;
 use std::fmt::Display;
@@ -6,7 +6,7 @@ use std::ops::Range;
 
 use logos::Logos;
 
-/// Tokens types for the logik DSL.
+/// Tokens types for the logiq DSL.
 #[derive(Logos, Debug, PartialEq, Clone)]
 #[logos(skip r"[ \t\f]+")]
 #[logos(skip r"//[^\n]*")]

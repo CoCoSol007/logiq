@@ -1,4 +1,4 @@
-//! Logik: A library for parsing and manipulating logical propositions
+//! logiq: A library for parsing and manipulating logical propositions
 
 use std::collections::{HashMap, HashSet};
 use std::hash::{Hash, Hasher};

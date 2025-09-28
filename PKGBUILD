@@ -1,10 +1,10 @@
 # Maintainer: CoCoSol <solois.corentin@gmail.com>
-pkgname='logik'
+pkgname='logiq'
 pkgver=1
 pkgrel=1
 pkgdesc="A logic SAT solver"
 arch=('i686' 'x86_64' 'armv6h' 'armv7h')
-url="https://github.com/CoCoSol007/logik"
+url="https://github.com/CoCoSol007/logiq"
 license=('GPL')
 makedepends=('cargo')
 validpgpkeys=()
