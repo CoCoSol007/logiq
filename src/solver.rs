@@ -8,38 +8,80 @@ use crate::clause::{
 };
 use crate::proposition::{Proposition, PropositionCNF, PropositionNNF};
 
-/// Represents the solution to a logical proposition evaluation.
-pub struct Solution {
-    /// A mapping of variable names to their assigned boolean values if the
-    /// proposition is satisfiable. If the proposition is unsatisfiable, this
-    /// will be None.
-    pub assignments: HashSet<Posibility>,
+/// Represents errors that can occur during the solving process.
+pub enum SolveError {
+    /// The set of propositions is unsatisfiable.
+    Unsatisfiable,
+    /// No variables were found in the propositions.
+    NoVariable,
 }
 
-impl Solution {
-    /// Checks if the proposition is satisfiable based on the assignments.
-    pub fn is_satisfiable(&self) -> bool {
-        !self.assignments.is_empty()
+/// Solves a set of logical propositions and returns all possible satisfying
+/// assignments.
+pub fn solve(propositions: Vec<Proposition>) -> Result<HashSet<Posibility>, SolveError> {
+    let mut clauses = Vec::new();
+
+    let all_variables: HashSet<String> = propositions
+        .iter()
+        .flat_map(|p| p.get_variables())
+        .collect();
+
+    if all_variables.len() == 0 {
+        return Err(SolveError::NoVariable);
     }
-}
 
-impl From<Vec<Proposition>> for Solution {
-    fn from(propositions: Vec<Proposition>) -> Self {
-        let mut clauses = Vec::new();
+    for proposition in propositions {
+        let nnf = PropositionNNF::from(proposition);
+        let cnf = PropositionCNF::from_nnf(nnf);
+        let mut new_clauses = clause::Clause::from_cnf(cnf);
+        clauses.extend(new_clauses.drain(..));
+    }
 
-        for proposition in propositions {
-            let nnf = PropositionNNF::from(proposition);
-            let cnf = PropositionCNF::from_nnf(nnf);
-            let mut new_clauses = clause::Clause::from_cnf(cnf);
-            clauses.extend(new_clauses.drain(..));
+    let simplificated_clauses = simplificated_clauses_from_clauses(clauses);
+
+    let mut assignments = std::collections::HashSet::new();
+    backtrack(simplificated_clauses, &mut assignments, HashSet::new());
+
+    // If a variable is not in a posibility we create 2 new posibilities with the
+    // variable set to true and false. It can have 0 1 or more missing variables.
+    let mut assignments_with_all_variables = assignments;
+    while let Some(var) = get_missing_variable(&assignments_with_all_variables, &all_variables) {
+        let mut temp_assignments = HashSet::new();
+        for posibility in assignments_with_all_variables {
+            if posibility.0.contains_key(&var) {
+                temp_assignments.insert(posibility);
+            } else {
+                let mut posibility_true = posibility.0.clone();
+                posibility_true.insert(var.clone(), true);
+                temp_assignments.insert(Posibility(posibility_true));
+
+                let mut posibility_false = posibility.0.clone();
+                posibility_false.insert(var.clone(), false);
+                temp_assignments.insert(Posibility(posibility_false));
+            }
         }
-
-        let simplificated_clauses = simplificated_clauses_from_clauses(clauses);
-
-        let mut assignments = std::collections::HashSet::new();
-        backtrack(simplificated_clauses, &mut assignments, HashSet::new());
-        Self { assignments }
+        assignments_with_all_variables = temp_assignments;
     }
+
+    if assignments_with_all_variables.len() == 0 {
+        return Err(SolveError::Unsatisfiable);
+    }
+    Ok(assignments_with_all_variables)
+}
+
+/// Returns a variable that is missing in at least one posibility.
+fn get_missing_variable(
+    posibilities: &HashSet<Posibility>,
+    all_variables: &HashSet<String>,
+) -> Option<String> {
+    for var in all_variables {
+        for posibility in posibilities {
+            if !posibility.0.contains_key(var) {
+                return Some(var.clone());
+            }
+        }
+    }
+    None
 }
 
 /// Represents a possible assignment of boolean values to variables.

@@ -140,6 +140,22 @@ impl Display for PropositionNNF {
     }
 }
 
+impl Proposition {
+    /// Extracts the variables from a Proposition expression.
+    pub fn get_variables(&self) -> HashSet<String> {
+        match self {
+            Proposition::Not(inner) => inner.get_variables(),
+            Proposition::And(lhs, rhs) | Proposition::Or(lhs, rhs) => {
+                let mut vars = lhs.get_variables();
+                vars.extend(rhs.get_variables());
+                vars
+            }
+            Proposition::Value(_) => HashSet::new(),
+            Proposition::Variable(v) => HashSet::from([v.clone()]),
+        }
+    }
+}
+
 /// Represents a logical proposition in Conjunctive Normal Form (CNF).
 /// To be more easy to manipulate as clauses it do not support AND operation
 /// directly. Instead a CNF is represented as a vector of clauses, where each
