@@ -109,8 +109,13 @@ pub fn parser<'src>()
         eq_expr.labelled("logical expression")
     });
 
-    expr.separated_by(just(TokenType::NewLine).repeated().labelled("new line"))
-        .allow_trailing()
-        .allow_leading()
-        .collect::<Vec<_>>()
+    expr.separated_by(
+        just(TokenType::NewLine)
+            .repeated()
+            .at_least(1)
+            .labelled("new line"),
+    )
+    .allow_trailing()
+    .allow_leading()
+    .collect::<Vec<_>>()
 }
